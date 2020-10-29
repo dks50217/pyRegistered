@@ -2,6 +2,8 @@ from datetime import datetime
 from datetime import timedelta
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
+from model.param_email import Param_Email
+from control.ctr_email import Ctr_Email
 import os
 import sys
 import configparser
@@ -17,7 +19,7 @@ CONFIG_PATH = os.path.join(application_path, config_file_name)
 config = configparser.ConfigParser()
 config.read(CONFIG_PATH,encoding="utf-8")
 
-
+config_sendmail = config['system']['sendmail']
 config_auto_click = config['system']['autoclick']
 config_screenshot = config['system']['screenshot']
 config_driver = config['path']['driver']
@@ -30,8 +32,10 @@ config_chgdr =  config['url']['chgdr']
 config_Lang =  config['url']['Lang']
 config_idno =  config['url']['idno']
 config_birth =  config['url']['birth']
+config_day = int(config['url']['day'])
 registerDate = datetime.now() + timedelta(days=14) 
 schdate = registerDate.strftime("%Y/%m/%d")
+schdate_picture =  "{0}_registered.png".format(registerDate.strftime("%Y%m%d"))
 
 
 registerURL = "{URL}?dept={dept}&dr={dr}&drname={drname}&schdate={schdate}&schap={schap}&chgdr={chgdr}&Lang={Lang}&idno={idno}&birth={birth}".format(
@@ -47,6 +51,7 @@ registerURL = "{URL}?dept={dept}&dr={dr}&drname={drname}&schdate={schdate}&schap
     birth = config_birth
 )
 
+
 options = Options()
 driver = webdriver.Chrome(config_driver, chrome_options=options)
 driver.set_window_size(1024, 960)
@@ -56,4 +61,19 @@ if config_auto_click == '1':
     driver.find_element_by_xpath('//*[@id="btnInput"]').click()
 
 if config_screenshot == '1':
-    driver.save_screenshot('{0}_registered.png'.format(schdate))
+    driver.save_screenshot(schdate_picture)
+
+if config_sendmail == '1':
+    objParamEmail = Param_Email(
+        "{0}_{1}門診掛號成功".format(schdate,config_drname),
+        config['email']['from'],
+        config['email']['to'],
+        "這封信件是由系統自動寄出，附件為掛號結果",
+        schdate_picture,
+        config['email']['key']
+    )
+
+    ctr_email = Ctr_Email(objParamEmail)
+    ctr_email.sendMail()
+
+
