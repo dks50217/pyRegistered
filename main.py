@@ -8,6 +8,7 @@ import os
 import sys
 import configparser
 
+success_msg = '預約掛號成功'
 config_file_name = 'config.ini'
 
 if getattr(sys, 'frozen', False):
@@ -63,7 +64,8 @@ if config_auto_click == '1':
 if config_screenshot == '1':
     driver.save_screenshot(schdate_picture)
 
-if config_sendmail == '1':
+
+if (success_msg in driver.page_source):
     objParamEmail = Param_Email(
         "{0}_{1}門診掛號成功".format(schdate,config_drname),
         config['email']['from'],
@@ -72,8 +74,21 @@ if config_sendmail == '1':
         schdate_picture,
         config['email']['key']
     )
+else:
+    objParamEmail = Param_Email(
+        "{0}_{1}門診掛號失敗".format(schdate,config_drname),
+        config['email']['from'],
+        config['email']['to'],
+        "這封信件是由系統自動寄出，附件為掛號結果",
+        schdate_picture,
+        config['email']['key']
+    )
 
+if config_sendmail == '1':
     ctr_email = Ctr_Email(objParamEmail)
     ctr_email.sendMail()
+
+driver.close()
+sys.exit()
 
 
