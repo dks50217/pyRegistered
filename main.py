@@ -4,6 +4,7 @@ from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from model.param_email import Param_Email
 from control.ctr_email import Ctr_Email
+from control.ctr_version import Ctr_Version
 import os
 import sys
 import configparser
@@ -23,6 +24,7 @@ config.read(CONFIG_PATH,encoding="utf-8")
 config_sendmail = config['system']['sendmail']
 config_auto_click = config['system']['autoclick']
 config_screenshot = config['system']['screenshot']
+config_checkdriver = config['system']['checkdriver']
 config_driver = config['path']['driver']
 config_URL = config['url']['router']
 config_dept =  config['url']['dept']
@@ -37,7 +39,6 @@ config_day = int(config['url']['day'])
 registerDate = datetime.now() + timedelta(days=14) 
 schdate = registerDate.strftime("%Y/%m/%d")
 schdate_picture =  "{0}_registered.png".format(registerDate.strftime("%Y%m%d"))
-
 
 registerURL = "{URL}?dept={dept}&dr={dr}&drname={drname}&schdate={schdate}&schap={schap}&chgdr={chgdr}&Lang={Lang}&idno={idno}&birth={birth}".format(
     URL = config_URL,
@@ -55,6 +56,16 @@ registerURL = "{URL}?dept={dept}&dr={dr}&drname={drname}&schdate={schdate}&schap
 
 options = Options()
 driver = webdriver.Chrome(config_driver, chrome_options=options)
+
+if config_checkdriver == '1':
+    ctr_version = Ctr_Version(driver)
+    versionChecked = ctr_version.checkWebDriver();
+
+if versionChecked == 0:
+    print("WebDriver與目前Chrome版本不相同!")
+    driver.close()
+    sys.exit()
+
 driver.set_window_size(1024, 960)
 driver.get(registerURL)
 
