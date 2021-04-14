@@ -4,10 +4,12 @@ from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from model.param_email import Param_Email
 from control.ctr_email import Ctr_Email
-from control.ctr_version import Ctr_Version
+##from control.ctr_version import Ctr_Version
 import os
 import sys
 import configparser
+import util.chrome_helper
+
 
 success_msg = '預約掛號成功'
 config_file_name = 'config.ini'
@@ -53,18 +55,9 @@ registerURL = "{URL}?dept={dept}&dr={dr}&drname={drname}&schdate={schdate}&schap
     birth = config_birth
 )
 
-
 options = Options()
+util.chrome_helper.check_browser_driver_available()
 driver = webdriver.Chrome(config_driver, chrome_options=options)
-
-if config_checkdriver == '1':
-    ctr_version = Ctr_Version(driver)
-    versionChecked = ctr_version.checkWebDriver();
-
-if versionChecked == 0:
-    print("WebDriver與目前Chrome版本不相同!")
-    driver.close()
-    sys.exit()
 
 driver.set_window_size(1024, 960)
 driver.get(registerURL)
