@@ -3,11 +3,12 @@
 
 # config
 1. Add config.ini at root
-2. Add below config 
+2. Add below config
 
 ```
 [url]
 router = 網頁網址
+router2 = 新版網頁網址
 dept = 部門
 dr = 代碼
 drname = 醫生名稱
@@ -17,6 +18,8 @@ lang = C
 idno = 掛號者身分證字號
 birth = 掛號者出生年月日 YYMMDD
 day = 掛幾天後的號
+version = 掛號版本
+workflag = 固定放入registernow
 [system]
 autoclick = 1 //是否自動點擊
 screenshot = 1 //是否截圖

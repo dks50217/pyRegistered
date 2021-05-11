@@ -43,8 +43,8 @@ class Ctr_Register():
             'strSchap':self.param_config.schap,
             'strDept':self.param_config.dept,
             'strDr':self.param_config.dr,
-            'txtID':'',
-            'txtBirth':''
+            'txtID':self.param_config.idno,
+            'txtBirth':self.param_config.birth
         }
 
         result = requests.post(self.registerURL, data=params)
